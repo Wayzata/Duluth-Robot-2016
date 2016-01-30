@@ -1,4 +1,4 @@
-package xyz.remexre.robotics.frc2016;
+package xyz.remexre.robotics.frc2016.util;
 
 import java.util.Arrays;
 import java.util.List;
