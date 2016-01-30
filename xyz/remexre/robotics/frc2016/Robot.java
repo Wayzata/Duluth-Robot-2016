@@ -10,8 +10,12 @@ public class Robot extends IterativeRobot {
 	
 	@Override
 	public void robotInit() {
-		this.controls = new Controls(0, 1);
-		this.driveTrain = new DriveTrain(17, 18, 19, 20);
+		this.controls = new Controls(RobotParts.JOYSTICKS.DRIVE,
+				RobotParts.JOYSTICKS.ARM);
+		this.driveTrain = new DriveTrain(RobotParts.MOTORS.FRONT_LEFT,
+				RobotParts.MOTORS.BACK_LEFT,
+				RobotParts.MOTORS.FRONT_RIGHT,
+				RobotParts.MOTORS.BACK_RIGHT);
 	}
 	
 	@Override
