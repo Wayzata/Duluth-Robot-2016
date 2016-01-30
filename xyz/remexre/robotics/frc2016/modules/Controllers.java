@@ -4,13 +4,13 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotDrive;
 
 /**
- * The controls class manages {@link Joystick}s and other user inputs.
+ * The controllers class manages {@link Joystick}s and other user inputs.
  * @author Nathan Ringo
  */
-public class Controls {
+public class Controllers {
 	private Joystick drive, arm;
 	
-	public Controls(int driveID, int armID) {
+	public Controllers(int driveID, int armID) {
 		this.drive = new Joystick(driveID);
 		this.arm = new Joystick(armID);
 	}
