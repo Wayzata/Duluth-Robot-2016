@@ -12,6 +12,7 @@ import xyz.remexre.robotics.frc2016.util.MultiSpeedController;
  */
 public class DriveTrain {
 	private RobotDrive drive;
+	// TODO Some sort of safety/max speed?
 
 	/**
 	 * Constructs a drive train from motor IDs. Assumes that all motors are CANTalons.
@@ -61,15 +62,17 @@ public class DriveTrain {
 	 * @param joystick The joystick to use.
 	 */
 	public void drive(Joystick joystick) {
-		this.drive.arcadeDrive(joystick);
+		double speed = joystick.getY();
+		double turn = joystick.getX();
+		this.drive(speed, turn);
 	}
 	
 	/**
 	 * Steers the drive train based on a speed and direction.
-	 * @param r The speed to drive at.
-	 * @param theta The direction to drive towards.
+	 * @param speed The speed to drive at.
+	 * @param turn The amount of turning to do.
 	 */
-	public void drive(double r, double theta) {
-		this.drive.arcadeDrive(r, theta);
+	public void drive(double speed, double turn) {
+		this.drive.arcadeDrive(speed, turn);
 	}
 }

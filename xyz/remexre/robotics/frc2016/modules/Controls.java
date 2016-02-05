@@ -7,10 +7,10 @@ import edu.wpi.first.wpilibj.RobotDrive;
  * The controllers class manages {@link Joystick}s and other user inputs.
  * @author Nathan Ringo
  */
-public class Controllers {
+public class Controls {
 	private Joystick drive, arm;
 	
-	public Controllers(int driveID, int armID) {
+	public Controls(int driveID, int armID) {
 		this.drive = new Joystick(driveID);
 		this.arm = new Joystick(armID);
 	}
@@ -22,4 +22,10 @@ public class Controllers {
 	 * @return The drive joystick.
 	 */
 	public Joystick getDriveJoystick() { return this.drive; }
+	
+	/**
+	 * Returns whether the "brake button" is pressed or not.
+	 * @return The button state.
+	 */
+	public boolean getBrakeButton() { return this.drive.getRawButton(1); }
 }
