@@ -1,14 +1,12 @@
 package xyz.remexre.robotics.frc2016;
 
-import java.util.HashMap;
 import java.util.Set;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import xyz.remexre.robotics.frc2016.controls.Control;
 import xyz.remexre.robotics.frc2016.controls.ControlScheme;
-import xyz.remexre.robotics.frc2016.controls.GamepadButton;
-import xyz.remexre.robotics.frc2016.controls.schemes.MapControlScheme;
+import xyz.remexre.robotics.frc2016.controls.schemes.BasicControlScheme;
 import xyz.remexre.robotics.frc2016.modules.Arm;
 import xyz.remexre.robotics.frc2016.modules.Controllers;
 import xyz.remexre.robotics.frc2016.modules.DriveTrain;
@@ -16,6 +14,13 @@ import xyz.remexre.robotics.frc2016.modules.Shooter;
 import xyz.remexre.robotics.frc2016.modules.Vision;
 import xyz.remexre.robotics.frc2016.modules.Winch;
 
+/**
+ * The Contingency Robot should not be used unless the "real robot" really and
+ * truly cannot be -- the new programmers are <b>not</b> going to be up to
+ * debugging this code, and they need to learn both how to write code by
+ * themselves and debug it.
+ * @author Nathan Ringo
+ */
 public class Robot extends IterativeRobot {
 	private Arm arm; // TODO Implement Arm.
 	private Controllers controllers;
@@ -36,13 +41,8 @@ public class Robot extends IterativeRobot {
 		this.vision = new Vision("cam0");
 		this.winch = new Winch(new CANTalon(RobotParts.MOTORS.WINCH));
 		
-		// WARNING: This creates an anonymous subclass of HashMap. So don't abuse.
-		this.controlScheme = new MapControlScheme(new HashMap<GamepadButton, Control>(){{
-			this.put(GamepadButton.R1, Control.RETRACT_WINCH);
-			this.put(GamepadButton.R2, Control.EXTEND_FOREARM);
-			this.put(GamepadButton.L1, Control.EXTEND_WINCH);
-			this.put(GamepadButton.L2, Control.RETRACT_FOREARM);
-		}});
+		// TODO Add a control scheme chooser on the SmartDashboard.
+		this.controlScheme = new BasicControlScheme();
 	}
 	
 	@Override
