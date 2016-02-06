@@ -1,18 +1,21 @@
 package xyz.remexre.robotics.frc2016;
 
+import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import xyz.remexre.robotics.frc2016.controls.Control;
 import xyz.remexre.robotics.frc2016.controls.ControlScheme;
+import xyz.remexre.robotics.frc2016.controls.Controls;
+import xyz.remexre.robotics.frc2016.controls.GamepadButton;
 import xyz.remexre.robotics.frc2016.controls.schemes.BasicControlScheme;
 import xyz.remexre.robotics.frc2016.modules.Arm;
 import xyz.remexre.robotics.frc2016.modules.Controllers;
 import xyz.remexre.robotics.frc2016.modules.DriveTrain;
 import xyz.remexre.robotics.frc2016.modules.Shooter;
 import xyz.remexre.robotics.frc2016.modules.Vision;
-import xyz.remexre.robotics.frc2016.modules.Winch;
+import xyz.remexre.robotics.frc2016.util.TernaryMotor;
 
 /**
  * The Contingency Robot should not be used unless the "real robot" really and
@@ -27,7 +30,7 @@ public class Robot extends IterativeRobot {
 	private DriveTrain driveTrain;
 	private Shooter shooter; // TODO Implement Shooter.
 	private Vision vision;
-	private Winch winch;
+	private TernaryMotor winch;
 	private ControlScheme controlScheme;
 	
 	@Override
@@ -39,7 +42,7 @@ public class Robot extends IterativeRobot {
 				RobotParts.MOTORS.FRONT_RIGHT,
 				RobotParts.MOTORS.BACK_RIGHT);
 		this.vision = new Vision("cam0");
-		this.winch = new Winch(new CANTalon(RobotParts.MOTORS.WINCH));
+		this.winch = new TernaryMotor(new CANTalon(RobotParts.MOTORS.WINCH));
 		
 		// TODO Add a control scheme chooser on the SmartDashboard.
 		this.controlScheme = new BasicControlScheme();
@@ -56,50 +59,19 @@ public class Robot extends IterativeRobot {
 			this.driveTrain.drive(this.controllers.getDriveSpeed(),
 					this.controllers.getDriveTurn());
 		// Get the gamepad controls.
-		Set<Control> controls = this.controllers.getControls(this.controlScheme);
+		Set<GamepadButton> buttons = this.controllers.getGamepadButtons().stream()
+			.filter(this.controlScheme.filter())
+			.collect(Collectors.toCollection(HashSet::new));
+		Controls controls = this.controlScheme.map(buttons);
 		// Control the arm.
-		//  Start with the shoulder joint.
-		if(controls.contains(Control.ACUTIFY_SHOULDER))
-			this.arm.acutifyShoulder();
-		else if(controls.contains(Control.OBTUSIFY_SHOULDER))
-			this.arm.obtusifyShoulder();
-		else
-			this.arm.stopShoulder();
-		//  Then the elbow joint.
-		if(controls.contains(Control.ACUTIFY_ELBOW))
-			this.arm.acutifyElbow();
-		else if(controls.contains(Control.OBTUSIFY_ELBOW))
-			this.arm.obtusifyElbow();
-		else
-			this.arm.stopElbow();
-		//  And lastly the forearm.
-		if(controls.contains(Control.EXTEND_FOREARM))
-			this.arm.extendForearm();
-		else if(controls.contains(Control.RETRACT_FOREARM))
-			this.arm.retractForearm();
-		else
-			this.arm.stopForearm();
+		this.arm.shoulder(controls.shoulder);
+		this.arm.elbow(controls.elbow);
+		this.arm.forearm(controls.forearm);
 		// Control the shooter.
-		//  First the arm.
-		if(controls.contains(Control.RAISE_SHOOTER_ARM))
-			this.shooter.raiseArm();
-		else if(controls.contains(Control.LOWER_SHOOTER_ARM))
-			this.shooter.lowerArm();
-		else
-			this.shooter.stopArm();
-		//  Then the belt.
-		if(controls.contains(Control.PULL_SHOOTER_BELT))
-			this.shooter.pullBelt();
-		else if(controls.contains(Control.PUSH_SHOOTER_BELT))
-			this.shooter.pushBelt();
-		else
-			this.shooter.stopBelt();
+		this.shooter.arm(controls.shooterArm);
+		this.shooter.belt(controls.shooterArm);
+		if(controls.shooter) this.shooter.shoot();
 		// Control the winch.
-		if(controls.contains(Control.EXTEND_WINCH))
-			this.winch.extend();
-		else if(controls.contains(Control.RETRACT_WINCH))
-			this.winch.retract();
-		else
-			this.winch.stop();
+		this.winch.set(controls.winch);
 	}
 }

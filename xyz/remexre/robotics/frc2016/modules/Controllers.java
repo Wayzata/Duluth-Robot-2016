@@ -7,8 +7,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import edu.wpi.first.wpilibj.Joystick;
-import xyz.remexre.robotics.frc2016.controls.Control;
-import xyz.remexre.robotics.frc2016.controls.ControlScheme;
 import xyz.remexre.robotics.frc2016.controls.GamepadButton;
 
 /**
@@ -34,23 +32,6 @@ public class Controllers {
 	 * @return The button state.
 	 */
 	public boolean getBrakeButton() { return this.joystick.getRawButton(1); }
-	
-	/**
-	 * Returns all activated controls.
-	 * @param controlScheme The control scheme.
-	 * @return The activated controls.
-	 */
-	public Set<Control> getControls(ControlScheme controlScheme) {
-		return IntStream.range(0, this.gamepad.getButtonCount())
-			.filter(this.gamepad::getRawButton)
-			.mapToObj(GamepadButton::get)
-			.filter(Optional::isPresent)
-			.map(Optional::get)
-			.map(controlScheme::mapOne)
-			.filter(Optional::isPresent)
-			.map(Optional::get)
-			.collect(Collectors.toCollection(HashSet::new));
-	}
 	
 	/**
 	 * Returns all pressed buttons on the gamepad.

@@ -1,33 +1,47 @@
 package xyz.remexre.robotics.frc2016.controls;
 
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Represents a control scheme, which maps buttons to actions.
  * @author Nathan Ringo
  */
-@FunctionalInterface
 public interface ControlScheme {
 	/**
-	 * Maps a single button to a control.
-	 * @param button The button.
-	 * @return The control.
+	 * Returns the conflict groups associated with the control scheme.
+	 * @return The conflict groups.
 	 */
-	public Optional<Control> mapOne(GamepadButton button);
+	public Collection<ConflictGroup> getConflictGroups();
 	
 	/**
-	 * Converts a set of buttons to a set of controls.
+	 * Converts a set of buttons to a controls object.
 	 * @param buttons The buttons.
 	 * @return The controls.
 	 */
-	public default Set<Control> mapAll(Set<GamepadButton> buttons) {
-		return buttons.stream()
-			.map(this::mapOne)
-			.filter(Optional::isPresent)
-			.map(Optional::get)
-			.collect(Collectors.toCollection(HashSet::new));
+	public Controls map(Set<GamepadButton> buttons);
+	
+	/**
+	 * Creates a new filtering function for use in removing conflicting buttons.
+	 * @return A function capable of being used in {@link Stream#filter(Predicate)}.
+	 */
+	public default Predicate<GamepadButton> filter() {
+		Collection<ConflictGroup> allCGs = this.getConflictGroups();
+		Set<ConflictGroup> cgSet = new HashSet<>();
+		return (button) -> {
+			Set<ConflictGroup> cgs = allCGs.stream()
+				.filter((cg) -> cg.hasButton(button))
+				.collect(Collectors.toCollection(HashSet::new));
+			long numConflicts = cgs.stream()
+				.filter((cg) -> cgSet.contains(cg))
+				.collect(Collectors.counting());
+			if(numConflicts > 0) return false;
+			cgSet.addAll(cgs);
+			return true;
+		};
 	}
 }

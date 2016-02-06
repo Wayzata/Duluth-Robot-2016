@@ -1,15 +1,11 @@
 package xyz.remexre.robotics.frc2016.modules;
 
+import xyz.remexre.robotics.frc2016.util.TernaryMotor;
+
 public class Arm {
-	public void acutifyShoulder() { /* TODO */ }
-	public void obtusifyShoulder() { /* TODO */ }
-	public void stopShoulder() { /* TODO */ }
+	public void shoulder(TernaryMotor.State state) { /* TODO */ }
 	
-	public void acutifyElbow() { /* TODO */ }
-	public void obtusifyElbow() { /* TODO */ }
-	public void stopElbow() { /* TODO */ }
+	public void elbow(TernaryMotor.State state) { /* TODO */ }
 	
-	public void extendForearm() { /* TODO */ }
-	public void retractForearm() { /* TODO */ }
-	public void stopForearm() { /* TODO */ }
+	public void forearm(TernaryMotor.State state) { /* TODO */ }
 }
