@@ -3,6 +3,7 @@ package xyz.remexre.robotics.frc2016.modules;
 import edu.wpi.first.wpilibj.CANTalon;
 import xyz.remexre.robotics.frc2016.RobotParts;
 import xyz.remexre.robotics.frc2016.util.TernaryMotor;
+import xyz.remexre.robotics.frc2016.util.TernaryMotor.State;
 
 /**
  * The controlling class for the Shooter
@@ -28,23 +29,25 @@ public class Shooter {
 	 * lowers arm
 	 * and stop arm
 	 */
-	public void ArmShooterMotor(TernaryMotor.State state) {
+	public void arm(TernaryMotor.State state) {
 		this.armMotor.set(state); 
 	}
 
 	/**
 	 * this pulls, pushes or stops the belt motor
 	 */
-	public void BeltShooterMotor(TernaryMotor.State state){
+	public void belt(TernaryMotor.State state){
 		this.beltMotor.set(state);
 	}
 	
 
 	/**
-	 * main motor in robot shooter spins and shoots the ball
+	 * Tries to shoot a ball. If the ball cannot be shot (for example, if no
+	 * ball is in the shooter), this will return false.
+	 * @return Whether the ball was able to be shot.
 	 */
-	public boolean MainShooterMotor(TernaryMotor.State state) {
-		this.mainMotor.set(state);
+	public boolean shoot() {
+		this.mainMotor.set(State.FORWARD);
 
 		// TODO
 		return false;

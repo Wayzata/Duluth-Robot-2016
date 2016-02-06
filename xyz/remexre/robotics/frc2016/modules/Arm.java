@@ -2,6 +2,8 @@ package xyz.remexre.robotics.frc2016.modules;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
+import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import xyz.remexre.robotics.frc2016.util.TernaryMotor;
 import xyz.remexre.robotics.frc2016.util.TernaryMotor.State;
 
@@ -21,16 +23,56 @@ public class Arm {
 		this.forearmMotor = new TernaryMotor(new CANTalon(forearmMotorID));
 		this.extendSwitch = new DigitalInput(extendSwitchID);
 		this.retractSwitch = new DigitalInput(retractSwitchID);
+		// Set up the modes on the joint motors.
+		this.shoulderMotor.changeControlMode(TalonControlMode.Position);
+		this.shoulderMotor.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+		this.elbowMotor.changeControlMode(TalonControlMode.Position);
+		this.elbowMotor.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+		// Set up PID constants to safe defaults.
+		this.shoulderMotor.setPID(1, 0, 0);
+		this.elbowMotor.setPID(1, 0, 0);
 	}
 
-	public void shoulder(TernaryMotor.State state) {
+	/**
+	 * Sets the angle the shoulder should aim for.
+	 * @param angle The angle to aim for.
+	 * @return If the safety was triggered.
+	 */
+	public boolean shoulder(double angle) {
 		// TODO Safety measures
-		this.shoulderMotor.set(state.get());
+		this.shoulderMotor.set(angle);
+		return false; // TODO
 	}
 
-	public void elbow(TernaryMotor.State state) {
+	/**
+	 * Sets the PID constants on the shoulder joint motor.
+	 * @param p The proportional constant.
+	 * @param i The integral constant.
+	 * @param d The derivative constant.
+	 */
+	public void shoulderPID(double p, double i, double d) {
+		this.shoulderMotor.setPID(p, i, d);
+	}
+
+	/**
+	 * Sets the angle the elbow should aim for.
+	 * @param angle The angle to aim for.
+	 * @return If the safety was triggered.
+	 */
+	public boolean elbow(double angle) {
 		// TODO Safety measures
-		this.elbowMotor.set(state.get());
+		this.elbowMotor.set(angle);
+		return false; // TODO
+	}
+	
+	/**
+	 * Sets the PID constants on the elbow joint motor.
+	 * @param p The proportional constant.
+	 * @param i The integral constant.
+	 * @param d The derivative constant.
+	 */
+	public void elbowPID(double p, double i, double d) {
+		this.elbowMotor.setPID(p, i, d);
 	}
 
 	/**
