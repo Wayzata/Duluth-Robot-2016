@@ -57,5 +57,11 @@ public class TernaryMotor {
 		
 		private double speed;
 		private State(double speed) { this.speed = speed; }
+		
+		/**
+		 * Returns the direction constant.
+		 * @return The constant.
+		 */
+		public double get() { return this.speed; }
 	}
 }
