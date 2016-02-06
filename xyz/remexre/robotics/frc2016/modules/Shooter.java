@@ -2,6 +2,7 @@ package xyz.remexre.robotics.frc2016.modules;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import xyz.remexre.robotics.frc2016.RobotParts;
+import xyz.remexre.robotics.frc2016.util.TernaryMotor;
 
 /**
  * The controlling class for the Shooter
@@ -9,67 +10,41 @@ import xyz.remexre.robotics.frc2016.RobotParts;
  */
 public class Shooter {
 
-	private CANTalon mainMotor;
-	private CANTalon beltMotor;
-	private CANTalon armMotor;
+	private TernaryMotor mainMotor;
+	private TernaryMotor beltMotor;
+	private TernaryMotor armMotor;
 
 	/**
 	 * Constructs the various shooter motors
 	 */
 	public Shooter() {
-		this.mainMotor = new CANTalon(RobotParts.MOTORS.SHOOTER_MAIN);
-		this.beltMotor = new CANTalon(RobotParts.MOTORS.SHOOTER_BELT);
-		this.armMotor = new CANTalon(RobotParts.MOTORS.SHOOTER_ARM);
+		this.mainMotor = new TernaryMotor(new CANTalon(RobotParts.MOTORS.SHOOTER_MAIN));
+		this.beltMotor = new TernaryMotor(new CANTalon (RobotParts.MOTORS.SHOOTER_BELT));
+		this.armMotor = new TernaryMotor(new CANTalon (RobotParts.MOTORS.SHOOTER_ARM));
 	}
 
 	/**
 	 * raises the arm
+	 * lowers arm
+	 * and stop arm
 	 */
-	public void raiseArm() {
-		this.armMotor.set(1);
+	public void ArmShooterMotor(TernaryMotor.State state) {
+		this.armMotor.set(state); 
 	}
 
 	/**
-	 * lowers the arm
+	 * this pulls, pushes or stops the belt motor
 	 */
-	public void lowerArm() {
-		this.armMotor.set(-1);
+	public void BeltShooterMotor(TernaryMotor.State state){
+		this.beltMotor.set(state);
 	}
-
-	/**
-	 * Pauses and stops the arm from moving
-	 */
-	public void stopArm() {
-		this.armMotor.set(0);
-	}
-
-	/**
-	 * This either goes counter cw or ccw, i am unsure
-	 */
-	public void pullBelt() {
-		this.beltMotor.set(1);
-	}
-
-	/**
-	 * This either goes counter cw or ccw, i am unsure
-	 */
-	public void pushBelt() {
-		this.beltMotor.set(-1);
-	}
-
-	/**
-	 * pauses the belt motor
-	 */
-	public void stopBelt() {
-		this.beltMotor.set(0);
-	}
+	
 
 	/**
 	 * main motor in robot shooter spins and shoots the ball
 	 */
-	public boolean shoot() {
-
-		this.mainMotor.set(1);
+	public boolean MainShooterMotor(TernaryMotor.State state) {
+		this.mainMotor.set(state);
 
 		// TODO
 		return false;
