@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.SpeedController;
 public class TernaryMotor {
 	private SpeedController motor;
 	private double multiplier;
-	
+
 	/**
 	 * Wraps a motor with a multiplier of 1.
 	 * @param motor The motor to wrap.
@@ -17,7 +17,7 @@ public class TernaryMotor {
 	public TernaryMotor(SpeedController motor) {
 		this(motor, 1.0);
 	}
-	
+
 	/**
 	 * Wraps a motor with a given multiplier.
 	 * @param motor The motor to wrap.
@@ -27,7 +27,7 @@ public class TernaryMotor {
 		this.motor = motor;
 		this.multiplier = multiplier;
 	}
-	
+
 	/**
 	 * Sets the motor to a given state.
 	 * @param state The state.
@@ -45,7 +45,7 @@ public class TernaryMotor {
 		this.multiplier = multiplier;
 		return this;
 	}
-	
+
 	/**
 	 * An enumeration to describe the valid states of a {@link TernaryMotor}.
 	 * @author Nathan Ringo
@@ -54,10 +54,10 @@ public class TernaryMotor {
 		STOP(0),
 		FORWARD(1),
 		BACKWARD(-1);
-		
+
 		private double speed;
 		private State(double speed) { this.speed = speed; }
-		
+
 		/**
 		 * Returns the direction constant.
 		 * @return The constant.

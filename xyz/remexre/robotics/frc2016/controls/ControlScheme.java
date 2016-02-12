@@ -17,14 +17,14 @@ public interface ControlScheme {
 	 * @return The conflict groups.
 	 */
 	public Collection<ConflictGroup> getConflictGroups();
-	
+
 	/**
 	 * Converts a set of buttons to a controls object.
 	 * @param buttons The buttons.
 	 * @return The controls.
 	 */
-	public Controls map(Set<GamepadButton> buttons);
-	
+	public Controls map(Set<GamepadButton> buttons, Axes driveAxes, Axes leftAxes, Axes rightAxes);
+
 	/**
 	 * Creates a new filtering function for use in removing conflicting buttons.
 	 * @return A function capable of being used in {@link Stream#filter(Predicate)}.
@@ -34,11 +34,11 @@ public interface ControlScheme {
 		Set<ConflictGroup> cgSet = new HashSet<>();
 		return (button) -> {
 			Set<ConflictGroup> cgs = allCGs.stream()
-				.filter((cg) -> cg.hasButton(button))
-				.collect(Collectors.toCollection(HashSet::new));
+					.filter((cg) -> cg.hasButton(button))
+					.collect(Collectors.toCollection(HashSet::new));
 			long numConflicts = cgs.stream()
-				.filter((cg) -> cgSet.contains(cg))
-				.collect(Collectors.counting());
+					.filter((cg) -> cgSet.contains(cg))
+					.collect(Collectors.counting());
 			if(numConflicts > 0) return false;
 			cgSet.addAll(cgs);
 			return true;

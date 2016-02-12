@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.vision.USBCamera;
 public class Vision {
 	private Image frame;
 	private USBCamera camera;
-	
+
 	/**
 	 * Constructs a vision instance based on a camera's name.
 	 * @param cameraName The name of the camera.
@@ -22,7 +22,7 @@ public class Vision {
 	public Vision(String cameraName) {
 		this(new USBCamera(cameraName));
 	}
-	
+
 	/**
 	 * Constructs a vision instance based on an existing {@link USBCamera}.
 	 * @param camera The camera to use.
@@ -35,7 +35,7 @@ public class Vision {
 		this.camera.setWhiteBalanceAuto();
 		this.camera.setExposureAuto();
 	}
-	
+
 	/**
 	 * Retrieves a single frame from the camera and sends it to the
 	 * SmartDashboard.

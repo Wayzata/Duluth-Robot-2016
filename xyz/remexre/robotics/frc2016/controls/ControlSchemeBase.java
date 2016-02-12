@@ -11,7 +11,7 @@ import java.util.function.Consumer;
  */
 public abstract class ControlSchemeBase implements ControlScheme {
 	private List<ConflictGroup> conflictGroups;
-	
+
 	/**
 	 * Initializes the conflict group list with the given conflict groups.
 	 * @param conflictGroups All the existing conflict groups.
@@ -19,18 +19,18 @@ public abstract class ControlSchemeBase implements ControlScheme {
 	public ControlSchemeBase(ConflictGroup ... conflictGroups) {
 		this.conflictGroups = Arrays.asList(conflictGroups);
 	}
-	
+
 	@Override
 	public List<ConflictGroup> getConflictGroups() {
 		return this.conflictGroups;
 	}
-	
+
 	@Override
-	public Controls map(Set<GamepadButton> buttons) {
+	public Controls map(Set<GamepadButton> buttons, Axes driveAxes, Axes leftAxes, Axes rightAxes) {
 		Controls controls = new Controls();
 		buttons.stream()
-			.map(this::map)
-			.forEach((fn) -> fn.accept(controls));
+		.map(this::map)
+		.forEach((fn) -> fn.accept(controls));
 		return controls;
 	}
 
@@ -40,4 +40,36 @@ public abstract class ControlSchemeBase implements ControlScheme {
 	 * @return The mutating function.
 	 */
 	public abstract Consumer<Controls> map(GamepadButton button);
+
+	/**
+	 * Maps the state of the drive axes to a function that mutates the controls
+	 * object.
+	 * @param pov The POV, as an angle (0 is up, continues clockwise).
+	 * @return The mutating function.
+	 */
+	public abstract Consumer<Controls> mapDriveAxes(Axes driveAxes);
+
+	/**
+	 * Maps the state of the left axes to a function that mutates the controls
+	 * object.
+	 * @param driveAxes The left axes.
+	 * @return The mutating function.
+	 */
+	public abstract Consumer<Controls> mapLeftAxes(Axes leftAxes);
+
+	/**
+	 * Maps the state of the right axes to a function that mutates the controls
+	 * object.
+	 * @param driveAxes The right axes.
+	 * @return The mutating function.
+	 */
+	public abstract Consumer<Controls> mapRightAxes(Axes rightAxes);
+
+	/**
+	 * Maps the state of the gamepad POV to a function that mutates the
+	 * controls object.
+	 * @param pov The POV from the gamepad.
+	 * @return The mutating function.
+	 */
+	public abstract Consumer<Controls> mapPOV(POV pov);
 }

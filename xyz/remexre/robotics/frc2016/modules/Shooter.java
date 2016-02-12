@@ -10,7 +10,6 @@ import xyz.remexre.robotics.frc2016.util.TernaryMotor.State;
  * @author mariel
  */
 public class Shooter {
-
 	private TernaryMotor mainMotor;
 	private TernaryMotor beltMotor;
 	private TernaryMotor armMotor;
@@ -18,9 +17,9 @@ public class Shooter {
 	/**
 	 * Constructs the various shooter motors
 	 */
-	public Shooter() {
-		this.mainMotor = new TernaryMotor(new CANTalon(RobotParts.MOTORS.SHOOTER_MAIN));
-		this.beltMotor = new TernaryMotor(new CANTalon (RobotParts.MOTORS.SHOOTER_BELT));
+	public Shooter(int shooterMotorID, int beltMotorID, int armMotorID) {
+		this.mainMotor = new TernaryMotor(new CANTalon(RobotParts.MOTORS.SHOOTER));
+		this.beltMotor = new TernaryMotor(new CANTalon (RobotParts.MOTORS.BELT));
 		this.armMotor = new TernaryMotor(new CANTalon (RobotParts.MOTORS.SHOOTER_ARM));
 	}
 
@@ -28,6 +27,7 @@ public class Shooter {
 	 * raises the arm
 	 * lowers arm
 	 * and stop arm
+	 * @param state
 	 */
 	public void arm(TernaryMotor.State state) {
 		this.armMotor.set(state); 
@@ -35,11 +35,11 @@ public class Shooter {
 
 	/**
 	 * this pulls, pushes or stops the belt motor
+	 * @param running
 	 */
-	public void belt(TernaryMotor.State state){
-		this.beltMotor.set(state);
+	public void belt(boolean running){
+		this.beltMotor.set(running ? TernaryMotor.State.FORWARD : TernaryMotor.State.STOP);
 	}
-	
 
 	/**
 	 * Tries to shoot a ball. If the ball cannot be shot (for example, if no

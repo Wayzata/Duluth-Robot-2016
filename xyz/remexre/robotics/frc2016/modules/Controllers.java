@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import edu.wpi.first.wpilibj.Joystick;
+import xyz.remexre.robotics.frc2016.controls.Axes;
 import xyz.remexre.robotics.frc2016.controls.GamepadButton;
 
 /**
@@ -14,9 +15,8 @@ import xyz.remexre.robotics.frc2016.controls.GamepadButton;
  * @author Nathan Ringo
  */
 public class Controllers {
-	private double safety;
 	private Joystick joystick, gamepad;
-	
+
 	/**
 	 * Constructs a controller based on the joystick numbers.
 	 * @param driveID The number of the drive joystick.
@@ -26,49 +26,65 @@ public class Controllers {
 		this.joystick = new Joystick(driveID);
 		this.gamepad = new Joystick(armID);
 	}
-	
-	/**
-	 * Returns whether the "brake button" is pressed or not.
-	 * @return The button state.
-	 */
-	public boolean getBrakeButton() { return this.joystick.getRawButton(1); }
-	
+
 	/**
 	 * Returns all pressed buttons on the gamepad.
 	 * @return The buttons.
 	 */
 	public Set<GamepadButton> getGamepadButtons() {
-		return IntStream.range(0, this.gamepad.getButtonCount())
-			.filter(this.gamepad::getRawButton)
-			.mapToObj(GamepadButton::get)
-			.filter(Optional::isPresent)
-			.map(Optional::get)
-			.collect(Collectors.toCollection(HashSet::new));
-	}
-	
-	/**
-	 * Returns the speed requested by the driver via the joystick.
-	 * @return The drive joystick's speed.
-	 */
-	public double getDriveSpeed() {
-		return this.joystick.getY() * this.joystick.getZ() * this.safety;
-	}
-	
-	/**
-	 * Returns the amount of turning requested by the driver via the joystick.
-	 * @return The drive joystick's turn factor.
-	 */
-	public double getDriveTurn() {
-		return this.joystick.getX() * this.joystick.getZ() * this.safety;
+		Set<GamepadButton> buttons = this.getGamepadButtons(this.joystick, true);
+		buttons.addAll(this.getGamepadButtons(this.gamepad, false));
+		return buttons;
 	}
 
 	/**
-	 * Sets the safety factor to the reciprocal of the argument.
-	 * @param i The reciprocal of the safety factor.
-	 * @return This object, to allow chaining.
+	 * Returns the pressed buttons on the given gamepad.
+	 * @param joystick The joystick to check.
+	 * @param ident The identifier to pass to {@link GamepadButton#get(boolean, int)}.
+	 * @return The buttons.
 	 */
-	public Controllers setSafety(double i) {
-		this.safety = 1/i;
-		return this;
+	private Set<GamepadButton> getGamepadButtons(Joystick joystick, boolean ident) {
+		return IntStream.range(0, joystick.getButtonCount())
+				.filter(joystick::getRawButton)
+				.mapToObj((n) -> GamepadButton.get(ident, n))
+				.filter(Optional::isPresent)
+				.map(Optional::get)
+				.collect(Collectors.toCollection(HashSet::new));
+	}
+
+	/**
+	 * Returns Axes corresponding to the drive joystick, after being adjusted
+	 * for the speed multiplier.
+	 * @return An Axes object.
+	 */
+	public Axes getDriveAxes() {
+		return new Axes(
+				this.joystick.getX(),
+				this.joystick.getY()
+				).times((this.joystick.getZ() + 1) / 2);
+	}
+
+	/**
+	 * Returns Axes corresponding to the left thumbstick of the gamepad, after
+	 * being adjusted for the speed multiplier.
+	 * @return An Axes object.
+	 */
+	public Axes getLeftAxes() {
+		return new Axes(
+				this.joystick.getRawAxis(0),
+				this.joystick.getRawAxis(1)
+				);
+	}
+
+	/**
+	 * Returns Axes corresponding to the right thumbstick of the gamepad, after
+	 * being adjusted for the speed multiplier.
+	 * @return An Axes object.
+	 */
+	public Axes getRightAxes() {
+		return new Axes(
+				this.joystick.getRawAxis(4),
+				this.joystick.getRawAxis(5)
+				);
 	}
 }

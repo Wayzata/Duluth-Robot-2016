@@ -1,9 +1,9 @@
 package xyz.remexre.robotics.frc2016.modules;
 
 import edu.wpi.first.wpilibj.CANTalon;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.SpeedController;
+import xyz.remexre.robotics.frc2016.controls.Axes;
 import xyz.remexre.robotics.frc2016.util.MultiSpeedController;
 
 /**
@@ -12,7 +12,6 @@ import xyz.remexre.robotics.frc2016.util.MultiSpeedController;
  */
 public class DriveTrain {
 	private RobotDrive drive;
-	// TODO Some sort of safety/max speed?
 
 	/**
 	 * Constructs a drive train from motor IDs. Assumes that all motors are CANTalons.
@@ -26,7 +25,7 @@ public class DriveTrain {
 			int frontRightMotorID,
 			int backRightMotorID) {
 		this(new CANTalon(frontLeftMotorID), new CANTalon(backLeftMotorID),
-			new CANTalon(frontRightMotorID), new CANTalon(backRightMotorID));
+				new CANTalon(frontRightMotorID), new CANTalon(backRightMotorID));
 	}
 	/**
 	 * Constructs a drive train based on its constituent motors.
@@ -56,17 +55,15 @@ public class DriveTrain {
 	 * cut power to the motors.
 	 */
 	public void brake() { this.drive.stopMotor(); }
-	
+
 	/**
-	 * Steers the drive train based on the joystick's state.
-	 * @param joystick The joystick to use.
+	 * Steers the drive train based on axes.
+	 * @param axes The values from the controls.
 	 */
-	public void drive(Joystick joystick) {
-		double speed = joystick.getY();
-		double turn = joystick.getX();
-		this.drive(speed, turn);
+	public void drive(Axes axes) {
+		this.drive(axes.y, axes.x);
 	}
-	
+
 	/**
 	 * Steers the drive train based on a speed and direction.
 	 * @param speed The speed to drive at.

@@ -34,7 +34,7 @@ public class ConflictGroup {
 	public boolean hasButton(GamepadButton button) {
 		return this.buttons.contains(button);
 	}
-	
+
 	/**
 	 * Return all the GamepadButtons in the ConflictGroup.
 	 * @return All conflicting buttons.
