@@ -30,7 +30,7 @@ public class POV {
 	 * @author Nathan Ringo
 	 */
 	public static enum Horizontal {
-		NULL,
+		NONE,
 		RIGHT,
 		LEFT;
 
@@ -40,9 +40,10 @@ public class POV {
 		 * @return The Horizontal.
 		 */
 		public static Horizontal get(int pov) {
-			if(pov > 0 && pov < 180) return RIGHT;
+			if(pov < 0) return NONE;
+			else if(pov > 0 && pov < 180) return RIGHT;
 			else if(pov > 180 && pov < 360) return LEFT;
-			else return NULL;
+			else return NONE;
 		}
 	}
 
@@ -51,7 +52,7 @@ public class POV {
 	 * @author Nathan Ringo
 	 */
 	public static enum Vertical {
-		NULL,
+		NONE,
 		UP,
 		DOWN;
 
@@ -61,9 +62,10 @@ public class POV {
 		 * @return The Vertical.
 		 */
 		public static Vertical get(int pov) {
-			if(pov > 270 || pov < 90) return UP;
+			if(pov < 0) return NONE;
+			else if(pov > 270 || pov < 90) return UP;
 			else if(pov > 90 && pov < 270) return DOWN;
-			else return NULL;
+			else return NONE;
 		}
 	}
 }
