@@ -13,6 +13,7 @@ import xyz.remexre.robotics.frc2016.controls.schemes.BasicControlScheme;
 import xyz.remexre.robotics.frc2016.modules.Arm;
 import xyz.remexre.robotics.frc2016.modules.Controllers;
 import xyz.remexre.robotics.frc2016.modules.DriveTrain;
+import xyz.remexre.robotics.frc2016.modules.Module;
 import xyz.remexre.robotics.frc2016.modules.Shooter;
 import xyz.remexre.robotics.frc2016.modules.Vision;
 import xyz.remexre.robotics.frc2016.util.TernaryMotor;
@@ -28,11 +29,8 @@ public class Robot extends IterativeRobot {
 	private Controllers controllers;
 	private ControlScheme controlScheme;
 
-	private Arm arm; // TODO Implement Arm.
-	private DriveTrain driveTrain;
-	private Shooter shooter;
-	private Vision vision;
-	private TernaryMotor winch;
+	private Set<Module> modules;
+	private TernaryMotor winch; // TODO Make a winch wrapper.
 
 	@Override
 	public void robotInit() {
@@ -41,19 +39,24 @@ public class Robot extends IterativeRobot {
 		// TODO Add a control scheme chooser on the SmartDashboard.
 		this.controlScheme = new BasicControlScheme();
 
-		this.arm = new Arm(RobotParts.MOTORS.SHOULDER,
+		this.modules = new HashSet<>();
+		this.modules.add(new Arm(
+				RobotParts.MOTORS.SHOULDER,
 				RobotParts.MOTORS.ELBOW,
 				RobotParts.MOTORS.FOREARM,
 				RobotParts.SWITCHES.EXTEND,
-				RobotParts.SWITCHES.RETRACT);
-		this.driveTrain = new DriveTrain(RobotParts.MOTORS.FRONT_LEFT,
+				RobotParts.SWITCHES.RETRACT));
+		this.modules.add(new DriveTrain(
+				RobotParts.MOTORS.FRONT_LEFT,
 				RobotParts.MOTORS.BACK_LEFT,
 				RobotParts.MOTORS.FRONT_RIGHT,
-				RobotParts.MOTORS.BACK_RIGHT);
-		this.shooter = new Shooter(RobotParts.MOTORS.SHOOTER,
+				RobotParts.MOTORS.BACK_RIGHT));
+		this.modules.add(new Shooter(
+				RobotParts.MOTORS.SHOOTER,
 				RobotParts.MOTORS.BELT,
-				RobotParts.MOTORS.SHOOTER_ARM);
-		this.vision = new Vision("cam0");
+				RobotParts.MOTORS.SHOOTER_ARM));
+		this.modules.add(new Vision("cam0"));
+
 		// TODO Make a winch wrapper with safety measures.
 		this.winch = new TernaryMotor(new CANTalon(RobotParts.MOTORS.WINCH));
 
@@ -61,9 +64,6 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void teleopPeriodic() {
-		// Send a camera frame to the SmartDashboard.
-		this.vision.sendFrame();
-
 		// Get the gamepad controls.
 		Set<GamepadButton> buttons = this.controllers.getGamepadButtons().stream()
 				.filter(this.controlScheme.filter())
@@ -73,19 +73,8 @@ public class Robot extends IterativeRobot {
 				this.controllers.getLeftAxes(),
 				this.controllers.getRightAxes());
 
-		// Control the arm.
-		this.arm.shoulder(controls.shoulderAngle);
-		this.arm.elbow(controls.elbowAngle);
-		this.arm.forearm(controls.forearm);
-
-		// Control the drive train.
-		if(controls.drive.isZero()) this.driveTrain.brake();
-		else this.driveTrain.drive(controls.drive);
-
-		// Control the shooter.
-		this.shooter.arm(controls.shooterArm);
-		this.shooter.belt(controls.enableBelt);
-		if(controls.enableShooter) this.shooter.shoot();
+		// Send state to the modules.
+		this.modules.forEach((module) -> module.control(controls));
 
 		// Control the winch.
 		this.winch.set(controls.winch);

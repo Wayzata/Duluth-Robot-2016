@@ -2,6 +2,7 @@ package xyz.remexre.robotics.frc2016.modules;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import xyz.remexre.robotics.frc2016.RobotParts;
+import xyz.remexre.robotics.frc2016.controls.Controls;
 import xyz.remexre.robotics.frc2016.util.TernaryMotor;
 import xyz.remexre.robotics.frc2016.util.TernaryMotor.State;
 
@@ -9,7 +10,7 @@ import xyz.remexre.robotics.frc2016.util.TernaryMotor.State;
  * The controlling class for the Shooter
  * @author mariel
  */
-public class Shooter {
+public class Shooter implements Module {
 	private TernaryMotor mainMotor;
 	private TernaryMotor beltMotor;
 	private TernaryMotor armMotor;
@@ -51,5 +52,12 @@ public class Shooter {
 
 		// TODO
 		return false;
+	}
+	
+	@Override
+	public void control(Controls controls) {
+		this.arm(controls.shooterArm);
+		this.belt(controls.enableBelt);
+		if(controls.enableShooter) this.shoot();
 	}
 }

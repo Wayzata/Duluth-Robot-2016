@@ -4,13 +4,14 @@ import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.SpeedController;
 import xyz.remexre.robotics.frc2016.controls.Axes;
+import xyz.remexre.robotics.frc2016.controls.Controls;
 import xyz.remexre.robotics.frc2016.util.MultiSpeedController;
 
 /**
  * DriveTrain is a class that manages the robot's drive train as a whole.
  * @author Nathan Ringo
  */
-public class DriveTrain {
+public class DriveTrain implements Module {
 	private RobotDrive drive;
 
 	/**
@@ -71,5 +72,11 @@ public class DriveTrain {
 	 */
 	public void drive(double speed, double turn) {
 		this.drive.arcadeDrive(speed, turn);
+	}
+
+	@Override
+	public void control(Controls controls) {
+		if(controls.drive.isZero()) this.brake();
+		else this.drive(controls.drive);
 	}
 }

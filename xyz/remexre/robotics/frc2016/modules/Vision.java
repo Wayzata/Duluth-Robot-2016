@@ -6,12 +6,13 @@ import com.ni.vision.NIVision.ImageType;
 
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.vision.USBCamera;
+import xyz.remexre.robotics.frc2016.controls.Controls;
 
 /**
  * Manages the camera, for display to the driver.
  * @author Nathan Ringo
  */
-public class Vision {
+public class Vision implements Module {
 	private Image frame;
 	private USBCamera camera;
 
@@ -40,7 +41,8 @@ public class Vision {
 	 * Retrieves a single frame from the camera and sends it to the
 	 * SmartDashboard.
 	 */
-	public void sendFrame() {
+	@Override
+	public void control(Controls controls) {
 		camera.getImage(this.frame);
 		CameraServer.getInstance().setImage(this.frame);
 	}

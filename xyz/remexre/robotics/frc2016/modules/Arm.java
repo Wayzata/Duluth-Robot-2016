@@ -4,6 +4,8 @@ import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
+import xyz.remexre.robotics.frc2016.controls.Controls;
+import xyz.remexre.robotics.frc2016.util.ArmMath;
 import xyz.remexre.robotics.frc2016.util.TernaryMotor;
 import xyz.remexre.robotics.frc2016.util.TernaryMotor.State;
 
@@ -11,7 +13,7 @@ import xyz.remexre.robotics.frc2016.util.TernaryMotor.State;
  * Controls the arm.
  * @author Nathan Ringo
  */
-public class Arm {
+public class Arm implements Module {
 	private CANTalon shoulderMotor, elbowMotor;
 	private TernaryMotor forearmMotor;
 	private DigitalInput extendSwitch, retractSwitch;
@@ -70,9 +72,9 @@ public class Arm {
 	 * @return If the safety was triggered.
 	 */
 	public boolean shoulder(double angle) {
-		// TODO Safety measures -- we need a maximum and minimum angle, and the 15-inch checker.
-		this.shoulderMotor.setSetpoint(angle);
-		return false; // TODO Return true if safety.
+		boolean unsafe = ArmMath.breaksSafety(angle, this.elbowMotor.getSetpoint());
+		if(!unsafe) this.shoulderMotor.setSetpoint(angle);
+		return unsafe;
 	}
 
 	/**
@@ -81,9 +83,9 @@ public class Arm {
 	 * @return If the safety was triggered.
 	 */
 	public boolean elbow(double angle) {
-		// TODO Safety measures -- we need a maximum and minimum angle, and the 15-inch checker.
-		this.elbowMotor.setSetpoint(angle);
-		return false; // TODO Return true if safety.
+		boolean unsafe = ArmMath.breaksSafety(this.shoulderMotor.getSetpoint(), angle);
+		if(!unsafe) this.elbowMotor.setSetpoint(angle);
+		return unsafe;
 	}
 
 	/**
@@ -103,5 +105,12 @@ public class Arm {
 		} else {
 			this.forearmMotor.set(state);
 		}
+	}
+
+	@Override
+	public void control(Controls controls) {
+		this.shoulder(controls.shoulderAngle);
+		this.elbow(controls.elbowAngle);
+		this.forearm(controls.forearm);
 	}
 }
