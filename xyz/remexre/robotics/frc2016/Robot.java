@@ -70,8 +70,10 @@ public class Robot extends IterativeRobot {
 				.collect(Collectors.toCollection(HashSet::new));
 		Controls controls = this.controlScheme.map(buttons,
 				this.controllers.getDriveAxes(),
+				this.controllers.getSlider(),
 				this.controllers.getLeftAxes(),
 				this.controllers.getRightAxes());
+		controls.debug();
 
 		// Send state to the modules.
 		this.modules.forEach((module) -> module.control(controls));

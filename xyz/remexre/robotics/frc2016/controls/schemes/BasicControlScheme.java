@@ -42,13 +42,13 @@ public class BasicControlScheme extends ControlSchemeBase {
 	}
 
 	@Override
-	public Consumer<Controls> map(GamepadButton button) {
+	public Consumer<Controls> mapButtons(GamepadButton button) {
 		switch(button) {
 		// Shooter
 		case A: return (c) -> c.enableShooter = true;
 		case B: return (c) -> c.enableBelt = true;
-		case L1: return (c) -> c.shooterArm = State.FORWARD;
-		case R1: return (c) -> c.shooterArm = State.BACKWARD;
+		case L1: return (c) -> c.forearm = State.FORWARD;
+		case R1: return (c) -> c.forearm = State.BACKWARD;
 		// Do nothing on an unknown button
 		default: return (c) -> {};
 		}
@@ -57,6 +57,11 @@ public class BasicControlScheme extends ControlSchemeBase {
 	@Override
 	public Consumer<Controls> mapDriveAxes(Axes driveAxes) {
 		return (c) -> c.drive = driveAxes;
+	}
+	
+	@Override
+	public Consumer<Controls> mapSlider(double slider) {
+		return (c) -> c.driveSpeedMultiplier = (slider + 1) / 2;
 	}
 
 	@Override

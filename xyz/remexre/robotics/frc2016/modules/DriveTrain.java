@@ -77,6 +77,6 @@ public class DriveTrain implements Module {
 	@Override
 	public void control(Controls controls) {
 		if(controls.drive.isZero()) this.brake();
-		else this.drive(controls.drive);
+		else this.drive(controls.drive.times(controls.driveSpeedMultiplier));
 	}
 }

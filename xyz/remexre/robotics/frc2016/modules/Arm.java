@@ -2,6 +2,7 @@ package xyz.remexre.robotics.frc2016.modules;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import xyz.remexre.robotics.frc2016.controls.Controls;
@@ -16,6 +17,9 @@ import xyz.remexre.robotics.frc2016.util.TernaryMotor.State;
 public class Arm implements Module {
 	private CANTalon shoulderMotor, elbowMotor;
 	private TernaryMotor forearmMotor;
+	
+	// Note: These switches are Normally Closed, not Normally Open.
+	// Therefore, they return true when not depressed and false when depressed.
 	private DigitalInput extendSwitch, retractSwitch;
 
 	/**
@@ -93,11 +97,11 @@ public class Arm implements Module {
 	 * @param state The extension state.
 	 */
 	public void forearm(TernaryMotor.State state) {
-		if(state == State.FORWARD && this.extendSwitch.get()) {
+		if(state == State.FORWARD && !this.extendSwitch.get()) {
 			// If we're trying to extend and we're already overextending, stop.
 			this.forearm(State.STOP);
 			return;
-		} else if(state == State.BACKWARD && this.retractSwitch.get()) {
+		} else if(state == State.BACKWARD && !this.retractSwitch.get()) {
 			// If we're trying to retract and we're already overretracting,
 			// stop.
 			this.forearm(State.STOP);
@@ -112,5 +116,8 @@ public class Arm implements Module {
 		this.shoulder(controls.shoulderAngle);
 		this.elbow(controls.elbowAngle);
 		this.forearm(controls.forearm);
+
+		SmartDashboard.putBoolean("arm.retractSwitch", this.retractSwitch.get());
+		SmartDashboard.putBoolean("arm.extendSwitch", this.extendSwitch.get());
 	}
 }

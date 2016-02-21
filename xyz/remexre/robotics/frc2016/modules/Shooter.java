@@ -42,22 +42,19 @@ public class Shooter implements Module {
 		this.beltMotor.set(running ? TernaryMotor.State.FORWARD : TernaryMotor.State.STOP);
 	}
 
-	/**
-	 * Tries to shoot a ball. If the ball cannot be shot (for example, if no
-	 * ball is in the shooter), this will return false.
-	 * @return Whether the ball was able to be shot.
-	 */
-	public boolean shoot() {
-		this.mainMotor.set(State.FORWARD);
 
-		// TODO
-		return false;
+	/**
+	 * this pulls, pushes or stops the belt motor
+	 * @param running
+	 */
+	public void shooter(boolean running) {
+		this.mainMotor.set(running ? TernaryMotor.State.FORWARD : TernaryMotor.State.STOP);
 	}
 	
 	@Override
 	public void control(Controls controls) {
 		this.arm(controls.shooterArm);
 		this.belt(controls.enableBelt);
-		if(controls.enableShooter) this.shoot();
+		this.shooter(controls.enableShooter);
 	}
 }

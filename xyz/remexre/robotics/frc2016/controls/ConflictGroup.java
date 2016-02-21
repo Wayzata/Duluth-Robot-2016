@@ -42,19 +42,4 @@ public class ConflictGroup {
 	public List<GamepadButton> getList() {
 		return this.buttons;
 	}
-
-	/**
-	 * All the defined conflict groups.
-	 */
-	public static final List<ConflictGroup> conflictGroups = Arrays.asList(
-			new ConflictGroup(
-					GamepadButton.L1,
-					GamepadButton.R1),
-			new ConflictGroup(
-					GamepadButton.L2,
-					GamepadButton.R2),
-			new ConflictGroup(
-					GamepadButton.L3,
-					GamepadButton.R3)
-			);
 }

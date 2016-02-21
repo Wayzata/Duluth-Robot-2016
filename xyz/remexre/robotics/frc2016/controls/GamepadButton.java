@@ -12,12 +12,11 @@ import java.util.stream.Collectors;
  */
 public enum GamepadButton {
 	// TODO Order these correctly, or add e.g. a Predicate<Joystick> to check.
+	JOYSTICK_TRIGGER,
 	A, B, X, Y,
-	UP, DOWN, LEFT, RIGHT,
-	START, SELECT,
-	L1, L2, L3,
-	R1, R2, R3,
-	JOYSTICK_TRIGGER;
+	L1, R1,
+	BACK, START,
+	L3, R3;
 
 	/**
 	 * Returns the button enumerated by the given button number.

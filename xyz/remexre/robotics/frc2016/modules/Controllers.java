@@ -44,7 +44,7 @@ public class Controllers {
 	 * @return The buttons.
 	 */
 	private Set<GamepadButton> getGamepadButtons(Joystick joystick, boolean ident) {
-		return IntStream.range(0, joystick.getButtonCount())
+		return IntStream.range(1, joystick.getButtonCount())
 				.filter(joystick::getRawButton)
 				.mapToObj((n) -> GamepadButton.get(ident, n))
 				.filter(Optional::isPresent)
@@ -53,17 +53,24 @@ public class Controllers {
 	}
 
 	/**
-	 * Returns Axes corresponding to the drive joystick, after being adjusted
-	 * for the speed multiplier.
+	 * Returns Axes corresponding to the drive joystick.
 	 * @return An Axes object.
 	 */
 	public Axes getDriveAxes() {
 		return new Axes(
 				this.joystick.getX(),
 				this.joystick.getY()
-				).times((this.joystick.getZ() + 1) / 2);
+				);
 	}
 
+	/**
+	 * Returns the slider position.
+	 * @return The position, -1 to 1.
+	 */
+	public double getSlider() {
+		return this.joystick.getTwist();
+	}
+	
 	/**
 	 * Returns Axes corresponding to the left thumbstick of the gamepad, after
 	 * being adjusted for the speed multiplier.
@@ -71,9 +78,8 @@ public class Controllers {
 	 */
 	public Axes getLeftAxes() {
 		return new Axes(
-				this.joystick.getRawAxis(0),
-				this.joystick.getRawAxis(1)
-				);
+				this.gamepad.getRawAxis(0),
+				this.gamepad.getRawAxis(1));
 	}
 
 	/**
@@ -83,8 +89,7 @@ public class Controllers {
 	 */
 	public Axes getRightAxes() {
 		return new Axes(
-				this.joystick.getRawAxis(4),
-				this.joystick.getRawAxis(5)
-				);
+				this.gamepad.getRawAxis(4),
+				this.gamepad.getRawAxis(5));
 	}
 }

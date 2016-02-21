@@ -23,7 +23,7 @@ public interface ControlScheme {
 	 * @param buttons The buttons.
 	 * @return The controls.
 	 */
-	public Controls map(Set<GamepadButton> buttons, Axes driveAxes, Axes leftAxes, Axes rightAxes);
+	public Controls map(Set<GamepadButton> buttons, Axes driveAxes, double slider, Axes leftAxes, Axes rightAxes);
 
 	/**
 	 * Creates a new filtering function for use in removing conflicting buttons.
