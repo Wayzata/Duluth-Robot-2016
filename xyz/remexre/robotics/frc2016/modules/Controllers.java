@@ -1,13 +1,14 @@
 package xyz.remexre.robotics.frc2016.modules;
 
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import xyz.remexre.robotics.frc2016.RobotParts;
 import xyz.remexre.robotics.frc2016.controls.Axes;
+import xyz.remexre.robotics.frc2016.controls.ControlScheme;
 import xyz.remexre.robotics.frc2016.controls.GamepadButton;
 
 /**
@@ -26,30 +27,29 @@ public class Controllers {
 		this.joystick = new Joystick(driveID);
 		this.gamepad = new Joystick(armID);
 	}
-
+	
 	/**
-	 * Returns all pressed buttons on the gamepad.
+	 * Returns all pressed buttons, minus any conflicting buttons.
+	 * @param controlScheme The control scheme to load conflicts from.
 	 * @return The buttons.
 	 */
-	public Set<GamepadButton> getGamepadButtons() {
-		Set<GamepadButton> buttons = this.getGamepadButtons(this.joystick, true);
-		buttons.addAll(this.getGamepadButtons(this.gamepad, false));
-		return buttons;
-	}
-
-	/**
-	 * Returns the pressed buttons on the given gamepad.
-	 * @param joystick The joystick to check.
-	 * @param ident The identifier to pass to {@link GamepadButton#get(boolean, int)}.
-	 * @return The buttons.
-	 */
-	private Set<GamepadButton> getGamepadButtons(Joystick joystick, boolean ident) {
-		return IntStream.range(1, joystick.getButtonCount())
-				.filter(joystick::getRawButton)
-				.mapToObj((n) -> GamepadButton.get(ident, n))
-				.filter(Optional::isPresent)
-				.map(Optional::get)
+	public Set<GamepadButton> getGamepadButtons(ControlScheme controlScheme) {
+		StringBuilder buttonString = new StringBuilder();
+		
+		Set<GamepadButton> buttons = GamepadButton.get(true, this.joystick);
+		buttons.addAll(GamepadButton.get(false, this.gamepad));
+		buttons = buttons.stream()
+				.filter(controlScheme.filter())
+				.map((button) -> {
+					buttonString.append(button.toString());
+					buttonString.append(' ');
+					return button;
+				})
 				.collect(Collectors.toCollection(HashSet::new));
+		
+		SmartDashboard.putString("controllers.buttons", buttonString.toString());
+		
+		return buttons;
 	}
 
 	/**
@@ -57,10 +57,13 @@ public class Controllers {
 	 * @return An Axes object.
 	 */
 	public Axes getDriveAxes() {
-		return new Axes(
-				this.joystick.getX(),
-				this.joystick.getY()
-				);
+		double x = this.joystick.getRawAxis(RobotParts.AXES.JOYSTICK_X);
+		double y = this.joystick.getRawAxis(RobotParts.AXES.JOYSTICK_Y);
+
+		SmartDashboard.putNumber("controllers.drive.x", x);
+		SmartDashboard.putNumber("controllers.drive.y", y);
+		
+		return new Axes(x, y);
 	}
 
 	/**
@@ -68,7 +71,11 @@ public class Controllers {
 	 * @return The position, -1 to 1.
 	 */
 	public double getSlider() {
-		return this.joystick.getTwist();
+		double slider = this.joystick.getRawAxis(RobotParts.AXES.JOYSTICK_SLIDER);
+		
+		SmartDashboard.putNumber("controllers.slider", slider);
+		
+		return slider;
 	}
 	
 	/**
@@ -77,9 +84,13 @@ public class Controllers {
 	 * @return An Axes object.
 	 */
 	public Axes getLeftAxes() {
-		return new Axes(
-				this.gamepad.getRawAxis(0),
-				this.gamepad.getRawAxis(1));
+		double x = this.gamepad.getRawAxis(RobotParts.AXES.GAMEPAD_LEFT_X);
+		double y = this.gamepad.getRawAxis(RobotParts.AXES.GAMEPAD_LEFT_Y);
+
+		SmartDashboard.putNumber("controllers.left.x", x);
+		SmartDashboard.putNumber("controllers.left.y", y);
+		
+		return new Axes(x, y);
 	}
 
 	/**
@@ -88,8 +99,12 @@ public class Controllers {
 	 * @return An Axes object.
 	 */
 	public Axes getRightAxes() {
-		return new Axes(
-				this.gamepad.getRawAxis(4),
-				this.gamepad.getRawAxis(5));
+		double x = this.gamepad.getRawAxis(RobotParts.AXES.GAMEPAD_RIGHT_X);
+		double y = this.gamepad.getRawAxis(RobotParts.AXES.GAMEPAD_RIGHT_Y);
+
+		SmartDashboard.putNumber("controllers.right.x", x);
+		SmartDashboard.putNumber("controllers.right.y", y);
+		
+		return new Axes(x, y);
 	}
 }

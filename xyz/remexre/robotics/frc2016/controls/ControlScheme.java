@@ -44,4 +44,12 @@ public interface ControlScheme {
 			return true;
 		};
 	}
+	
+	/**
+	 * Returns the next control scheme to be used.
+	 * @return A Control Scheme.
+	 */
+	public default ControlScheme next() {
+		return this;
+	}
 }

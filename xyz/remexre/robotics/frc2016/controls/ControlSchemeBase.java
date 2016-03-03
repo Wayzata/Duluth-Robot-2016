@@ -27,7 +27,7 @@ public abstract class ControlSchemeBase implements ControlScheme {
 
 	@Override
 	public Controls map(Set<GamepadButton> buttons, Axes driveAxes, double slider, Axes leftAxes, Axes rightAxes) {
-		Controls controls = new Controls();
+		Controls controls = this.init();
 		buttons.stream()
 			.map(this::mapButtons)
 			.forEach((fn) -> fn.accept(controls));
@@ -37,6 +37,12 @@ public abstract class ControlSchemeBase implements ControlScheme {
 		this.mapRightAxes(rightAxes).accept(controls);
 		return controls;
 	}
+	
+	/**
+	 * Creates the initial controls object.
+	 * @return The initial controls object.
+	 */
+	public abstract Controls init();
 
 	/**
 	 * Maps a button to a function that mutates the controls object.
@@ -76,12 +82,4 @@ public abstract class ControlSchemeBase implements ControlScheme {
 	 * @return The mutating function.
 	 */
 	public abstract Consumer<Controls> mapRightAxes(Axes rightAxes);
-
-	/**
-	 * Maps the state of the gamepad POV to a function that mutates the
-	 * controls object.
-	 * @param pov The POV from the gamepad.
-	 * @return The mutating function.
-	 */
-	public abstract Consumer<Controls> mapPOV(POV pov);
 }

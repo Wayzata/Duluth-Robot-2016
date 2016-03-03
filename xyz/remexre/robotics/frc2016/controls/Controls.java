@@ -10,16 +10,17 @@ import xyz.remexre.robotics.frc2016.util.TernaryMotor.State;
  */
 public class Controls {
 	// Arm
-	public double shoulderAngle, elbowAngle;
-	public TernaryMotor.State forearm = State.STOP;
+	public double shoulderAngle = 0.0, elbowAngle = 0.0;
+	public boolean forearmExtended = false;
 
 	// Drive Train
 	public Axes drive = new Axes(0, 0);
-	public double driveSpeedMultiplier;
+	public double driveSpeedMultiplier = 0.0;
 
 	// Shooter
-	public TernaryMotor.State shooterArm = State.STOP;
-	public boolean enableBelt, enableShooter;
+	public double shooterArmAngle = 0.0;
+	public boolean enableShooter = false;
+	public TernaryMotor.State belt = State.STOP;
 
 	// Winch
 	public TernaryMotor.State winch = State.STOP;
@@ -30,12 +31,12 @@ public class Controls {
 	public void debug() {
 		SmartDashboard.putNumber("controls.shoulderAngle", this.shoulderAngle);
 		SmartDashboard.putNumber("controls.elbowAngle", this.elbowAngle);
-		SmartDashboard.putString("controls.forearm", this.forearm.toString());
+		SmartDashboard.putBoolean("controls.forearmExtended", this.forearmExtended);
 		SmartDashboard.putNumber("controls.drive.x", this.drive.x);
 		SmartDashboard.putNumber("controls.drive.y", this.drive.y);
 		SmartDashboard.putNumber("controls.driveSpeedMultiplier", this.driveSpeedMultiplier);
-		SmartDashboard.putString("controls.shooterArm", this.shooterArm.toString());
-		SmartDashboard.putBoolean("controls.enableBelt", this.enableBelt);
+		SmartDashboard.putNumber("controls.shooterArmAngle", this.shooterArmAngle);
+		SmartDashboard.putString("controls.belt", this.belt.toString());
 		SmartDashboard.putBoolean("controls.enableShooter", this.enableShooter);
 		SmartDashboard.putString("controls.winch", this.winch.toString());
 	}

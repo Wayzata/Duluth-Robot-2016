@@ -2,21 +2,19 @@ package xyz.remexre.robotics.frc2016;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import xyz.remexre.robotics.frc2016.controls.ControlScheme;
 import xyz.remexre.robotics.frc2016.controls.Controls;
 import xyz.remexre.robotics.frc2016.controls.GamepadButton;
-import xyz.remexre.robotics.frc2016.controls.schemes.BasicControlScheme;
+import xyz.remexre.robotics.frc2016.controls.schemes.ChloeMarcusControlScheme;
 import xyz.remexre.robotics.frc2016.modules.Arm;
 import xyz.remexre.robotics.frc2016.modules.Controllers;
 import xyz.remexre.robotics.frc2016.modules.DriveTrain;
 import xyz.remexre.robotics.frc2016.modules.Module;
 import xyz.remexre.robotics.frc2016.modules.Shooter;
 import xyz.remexre.robotics.frc2016.modules.Vision;
-import xyz.remexre.robotics.frc2016.util.TernaryMotor;
+import xyz.remexre.robotics.frc2016.modules.Winch;
 
 /**
  * The Contingency Robot should not be used unless the "real robot" really and
@@ -28,16 +26,14 @@ import xyz.remexre.robotics.frc2016.util.TernaryMotor;
 public class Robot extends IterativeRobot {
 	private Controllers controllers;
 	private ControlScheme controlScheme;
-
 	private Set<Module> modules;
-	private TernaryMotor winch; // TODO Make a winch wrapper.
 
 	@Override
 	public void robotInit() {
 		this.controllers = new Controllers(RobotParts.JOYSTICKS.DRIVE,
 				RobotParts.JOYSTICKS.ARM);
 		// TODO Add a control scheme chooser on the SmartDashboard.
-		this.controlScheme = new BasicControlScheme();
+		this.controlScheme = new ChloeMarcusControlScheme();
 
 		this.modules = new HashSet<>();
 		this.modules.add(new Arm(
@@ -56,18 +52,22 @@ public class Robot extends IterativeRobot {
 				RobotParts.MOTORS.BELT,
 				RobotParts.MOTORS.SHOOTER_ARM));
 		this.modules.add(new Vision("cam0"));
+		this.modules.add(new Winch(RobotParts.MOTORS.WINCH));
 
-		// TODO Make a winch wrapper with safety measures.
-		this.winch = new TernaryMotor(new CANTalon(RobotParts.MOTORS.WINCH));
-
+		this.modules.forEach((module) -> module.reset());
+	}
+	
+	@Override
+	public void autonomousInit() {
+		this.modules.stream()
+			.filter((m) -> m instanceof Shooter)
+			.map((m) -> (Shooter) m);
 	}
 
 	@Override
 	public void teleopPeriodic() {
 		// Get the gamepad controls.
-		Set<GamepadButton> buttons = this.controllers.getGamepadButtons().stream()
-				.filter(this.controlScheme.filter())
-				.collect(Collectors.toCollection(HashSet::new));
+		Set<GamepadButton> buttons = this.controllers.getGamepadButtons(this.controlScheme);
 		Controls controls = this.controlScheme.map(buttons,
 				this.controllers.getDriveAxes(),
 				this.controllers.getSlider(),
@@ -77,8 +77,5 @@ public class Robot extends IterativeRobot {
 
 		// Send state to the modules.
 		this.modules.forEach((module) -> module.control(controls));
-
-		// Control the winch.
-		this.winch.set(controls.winch);
 	}
 }

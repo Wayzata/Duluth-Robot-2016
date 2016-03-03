@@ -1,10 +1,11 @@
 package xyz.remexre.robotics.frc2016.modules;
 
 import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
+import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import xyz.remexre.robotics.frc2016.RobotParts;
 import xyz.remexre.robotics.frc2016.controls.Controls;
 import xyz.remexre.robotics.frc2016.util.TernaryMotor;
-import xyz.remexre.robotics.frc2016.util.TernaryMotor.State;
 
 /**
  * The controlling class for the Shooter
@@ -13,15 +14,19 @@ import xyz.remexre.robotics.frc2016.util.TernaryMotor.State;
 public class Shooter implements Module {
 	private TernaryMotor mainMotor;
 	private TernaryMotor beltMotor;
-	private TernaryMotor armMotor;
+	private CANTalon armMotor;
 
 	/**
 	 * Constructs the various shooter motors
 	 */
 	public Shooter(int shooterMotorID, int beltMotorID, int armMotorID) {
 		this.mainMotor = new TernaryMotor(new CANTalon(RobotParts.MOTORS.SHOOTER));
+		this.mainMotor.setMultiplier(0.8);
 		this.beltMotor = new TernaryMotor(new CANTalon (RobotParts.MOTORS.BELT));
-		this.armMotor = new TernaryMotor(new CANTalon (RobotParts.MOTORS.SHOOTER_ARM));
+		this.armMotor = new CANTalon(RobotParts.MOTORS.SHOOTER_ARM);
+		this.armMotor.changeControlMode(TalonControlMode.Position);
+		this.armMotor.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+		this.armMotor.setPID(1, 0, 0);
 	}
 
 	/**
@@ -30,16 +35,16 @@ public class Shooter implements Module {
 	 * and stop arm
 	 * @param state
 	 */
-	public void arm(TernaryMotor.State state) {
-		this.armMotor.set(state); 
+	public void arm(double angle) {
+		this.armMotor.setSetpoint(angle);
 	}
 
 	/**
 	 * this pulls, pushes or stops the belt motor
 	 * @param running
 	 */
-	public void belt(boolean running){
-		this.beltMotor.set(running ? TernaryMotor.State.FORWARD : TernaryMotor.State.STOP);
+	public void belt(TernaryMotor.State state){
+		this.beltMotor.set(state);
 	}
 
 
@@ -53,8 +58,8 @@ public class Shooter implements Module {
 	
 	@Override
 	public void control(Controls controls) {
-		this.arm(controls.shooterArm);
-		this.belt(controls.enableBelt);
+		this.arm(controls.shooterArmAngle);
+		this.belt(controls.belt);
 		this.shooter(controls.enableShooter);
 	}
 }

@@ -48,6 +48,9 @@ public class Arm implements Module {
 		// Set up PID constants to safe defaults.
 		this.shoulderPID(1, 0, 0);
 		this.elbowPID(1, 0, 0);
+		
+		// Set the maximum speeds.
+		this.forearmMotor.setMultiplier(0.4);
 	}
 
 	/**
@@ -77,7 +80,10 @@ public class Arm implements Module {
 	 */
 	public boolean shoulder(double angle) {
 		boolean unsafe = ArmMath.breaksSafety(angle, this.elbowMotor.getSetpoint());
-		if(!unsafe) this.shoulderMotor.setSetpoint(angle);
+		if(!unsafe) {
+			SmartDashboard.putNumber("arm.shoulder", angle);
+			this.shoulderMotor.setSetpoint(angle);
+		}
 		return unsafe;
 	}
 
@@ -88,7 +94,10 @@ public class Arm implements Module {
 	 */
 	public boolean elbow(double angle) {
 		boolean unsafe = ArmMath.breaksSafety(this.shoulderMotor.getSetpoint(), angle);
-		if(!unsafe) this.elbowMotor.setSetpoint(angle);
+		if(!unsafe) {
+			SmartDashboard.putNumber("arm.elbow", angle);
+			this.elbowMotor.setSetpoint(angle);
+		}
 		return unsafe;
 	}
 
@@ -96,28 +105,41 @@ public class Arm implements Module {
 	 * Controls the forearm's extension, including safety with the two limit switches.
 	 * @param state The extension state.
 	 */
-	public void forearm(TernaryMotor.State state) {
-		if(state == State.FORWARD && !this.extendSwitch.get()) {
+	public void forearm(boolean extended) {
+		if(extended && !this.extendSwitch.get()) {
 			// If we're trying to extend and we're already overextending, stop.
-			this.forearm(State.STOP);
+			SmartDashboard.putBoolean("arm.forearm.safe", false);
+			this.forearmMotor.set(State.STOP);
 			return;
-		} else if(state == State.BACKWARD && !this.retractSwitch.get()) {
+		} else if(!extended && !this.retractSwitch.get()) {
 			// If we're trying to retract and we're already overretracting,
 			// stop.
-			this.forearm(State.STOP);
+			SmartDashboard.putBoolean("arm.forearm.safe", false);
+			this.forearmMotor.set(State.STOP);
 			return;
 		} else {
-			this.forearmMotor.set(state);
+			SmartDashboard.putBoolean("arm.forearm.safe", true);
+			this.forearmMotor.set(extended ? State.FORWARD : State.BACKWARD);
 		}
 	}
 
 	@Override
 	public void control(Controls controls) {
-		this.shoulder(controls.shoulderAngle);
-		this.elbow(controls.elbowAngle);
-		this.forearm(controls.forearm);
+//		this.shoulder(controls.shoulderAngle);
+//		this.elbow(controls.elbowAngle);
+		this.forearm(controls.forearmExtended);
 
 		SmartDashboard.putBoolean("arm.retractSwitch", this.retractSwitch.get());
 		SmartDashboard.putBoolean("arm.extendSwitch", this.extendSwitch.get());
+	}
+	
+	@Override
+	public void reset() {
+		this.shoulderMotor.setPosition(0.0);
+		this.shoulderMotor.setSetpoint(0.0);
+		SmartDashboard.putNumber("arm.shoulder", 0.0);
+		this.elbowMotor.setPosition(0.0);
+		this.elbowMotor.setSetpoint(0.0);
+		SmartDashboard.putNumber("arm.elbow", 0.0);
 	}
 }

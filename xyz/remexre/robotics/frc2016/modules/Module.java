@@ -12,4 +12,9 @@ public interface Module {
 	 * @param controls The {@link Controls} object.
 	 */
 	public void control(Controls controls);
+	
+	/**
+	 * Resets the controller.
+	 */
+	public default void reset() {}
 }
