@@ -28,14 +28,14 @@ public class Robot extends IterativeRobot {
 	
 	@Override
 	public void robotInit() {
-		this.autonomi = new BetterSendableChooser<>(
+		this.autonomi = new BetterSendableChooser<>("Autonomous Programs",
 				new BasicAutonomous(),
 				new ArmDownAutonomous());
 		
 		this.controllers = new Controllers(RobotParts.JOYSTICKS.DRIVE,
 				RobotParts.JOYSTICKS.ARM);
 		
-		this.controlSchemes = new BetterSendableChooser<>(
+		this.controlSchemes = new BetterSendableChooser<>("Control Schemes",
 				new ChloeMarcusControlScheme(),
 				new DrakeGwynethControlScheme());
 
