@@ -27,7 +27,7 @@ public abstract class ControlSchemeBase implements ControlScheme {
 
 	@Override
 	public Controls map(Set<GamepadButton> buttons, Axes driveAxes, double slider, Axes leftAxes, Axes rightAxes) {
-		Controls controls = this.init();
+		Controls controls = this.pre();
 		buttons.stream()
 			.map(this::mapButtons)
 			.forEach((fn) -> fn.accept(controls));
@@ -42,7 +42,13 @@ public abstract class ControlSchemeBase implements ControlScheme {
 	 * Creates the initial controls object.
 	 * @return The initial controls object.
 	 */
-	public abstract Controls init();
+	public abstract Controls pre();
+	
+	/**
+	 * Post-processingly modifies the controls object.
+	 * @param controls The controls object to modify.
+	 */
+	public void post(Controls controls) {}
 
 	/**
 	 * Maps a button to a function that mutates the controls object.

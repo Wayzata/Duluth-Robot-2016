@@ -24,10 +24,16 @@ public class ChloeMarcusControlScheme extends ControlSchemeBase {
 	}
 	
 	@Override
-	public Controls init() {
+	public Controls pre() {
 		Controls c = new Controls();
 		c.armAngle = this.armAngle;
 		return c;
+	}
+	
+	@Override
+	public void post(Controls c) {
+		if(c.winMode >= 2)
+			c.drive = new Axes(0, -1);
 	}
 
 	@Override
@@ -41,6 +47,9 @@ public class ChloeMarcusControlScheme extends ControlSchemeBase {
 		
 		case R2: return (c) -> this.armAngle += 50;
 		case L2: return (c) -> this.armAngle -= 50;
+		
+		case JOYSTICK_BUTTON_9: return (c) -> c.winMode++;
+		case JOYSTICK_BUTTON_11: return (c) -> c.winMode++;
 		
 		// Do nothing on an unknown button
 		default: return (c) -> {};

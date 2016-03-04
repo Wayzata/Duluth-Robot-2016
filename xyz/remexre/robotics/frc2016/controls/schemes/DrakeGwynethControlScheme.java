@@ -27,7 +27,7 @@ public class DrakeGwynethControlScheme extends ControlSchemeBase {
 	}
 	
 	@Override
-	public Controls init() {
+	public Controls pre() {
 		Controls c = new Controls();
 		c.armAngle = this.armAngle;
 		return c;
@@ -54,5 +54,5 @@ public class DrakeGwynethControlScheme extends ControlSchemeBase {
 	}
 	
 	@Override
-	public String toString() { return "Chloe and Marcus"; }
+	public String toString() { return "Drake and Gwyneth"; }
 }

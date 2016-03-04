@@ -11,7 +11,8 @@ import xyz.remexre.robotics.frc2016.util.TernaryMotor.State;
 public class Controls {
 	// Drive Train
 	public Axes drive = new Axes(0, 0);
-
+	public int winMode = 0;
+	
 	// Shooter
 	public double armAngle = 0.0;
 	public TernaryMotor.State belt = State.STOP;
