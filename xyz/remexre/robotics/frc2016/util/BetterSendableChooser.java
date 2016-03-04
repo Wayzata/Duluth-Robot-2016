@@ -8,6 +8,8 @@ public class BetterSendableChooser<T> {
 	public BetterSendableChooser() {
 		this.sendableChooser = new SendableChooser();
 	}
+
+	@SafeVarargs
 	public BetterSendableChooser(T ... options) {
 		this();
 		
