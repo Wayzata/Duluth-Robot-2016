@@ -21,7 +21,7 @@ public class Shooter implements Module {
 	 */
 	public Shooter(int shooterMotorID, int beltMotorID, int armMotorID) {
 		this.mainMotor = new TernaryMotor(new CANTalon(RobotParts.MOTORS.SHOOTER));
-		this.mainMotor.setMultiplier(0.8);
+		this.mainMotor.setMultiplier(0.6);
 		this.beltMotor = new TernaryMotor(new CANTalon (RobotParts.MOTORS.BELT));
 		this.armMotor = new CANTalon(RobotParts.MOTORS.SHOOTER_ARM);
 		this.armMotor.changeControlMode(TalonControlMode.Position);
