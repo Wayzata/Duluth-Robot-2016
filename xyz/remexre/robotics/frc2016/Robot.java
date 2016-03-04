@@ -3,11 +3,8 @@ package xyz.remexre.robotics.frc2016;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.ni.vision.VisionException;
-
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import xyz.remexre.robotics.frc2016.autonomous.ArmDownAutonomous;
 import xyz.remexre.robotics.frc2016.autonomous.AutonomousProgram;
 import xyz.remexre.robotics.frc2016.autonomous.BasicAutonomous;
@@ -20,22 +17,20 @@ import xyz.remexre.robotics.frc2016.modules.Controllers;
 import xyz.remexre.robotics.frc2016.modules.DriveTrain;
 import xyz.remexre.robotics.frc2016.modules.Module;
 import xyz.remexre.robotics.frc2016.modules.Shooter;
-import xyz.remexre.robotics.frc2016.modules.Vision;
 import xyz.remexre.robotics.frc2016.util.BetterSendableChooser;
 
 public class Robot extends IterativeRobot {
 	private BetterSendableChooser<AutonomousProgram> autonomi;
 	private long autonomousStartTime;
+	private CameraServer cameraServer;
 	private Controllers controllers;
 	private BetterSendableChooser<ControlScheme> controlSchemes;
 	private Set<Module> modules;
-	private CameraServer server;
 	
 	public Robot() {
-        server = CameraServer.getInstance();
-        server.setQuality(50);
-        //the camera name (ex "cam0") can be found through the roborio web interface
-        server.startAutomaticCapture("cam0");
+        cameraServer = CameraServer.getInstance();
+        cameraServer.setQuality(50);
+        cameraServer.startAutomaticCapture("cam0");
     }
 	
 	@Override
