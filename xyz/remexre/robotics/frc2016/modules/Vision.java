@@ -5,7 +5,6 @@ import com.ni.vision.NIVision.Image;
 import com.ni.vision.NIVision.ImageType;
 
 import edu.wpi.first.wpilibj.CameraServer;
-import edu.wpi.first.wpilibj.vision.USBCamera;
 import xyz.remexre.robotics.frc2016.controls.Controls;
 
 /**
@@ -14,27 +13,16 @@ import xyz.remexre.robotics.frc2016.controls.Controls;
  */
 public class Vision implements Module {
 	private Image frame;
-	private USBCamera camera;
+	int cameraHandle;
 
 	/**
 	 * Constructs a vision instance based on a camera's name.
 	 * @param cameraName The name of the camera.
 	 */
 	public Vision(String cameraName) {
-		this(new USBCamera(cameraName));
-	}
-
-	/**
-	 * Constructs a vision instance based on an existing {@link USBCamera}.
-	 * @param camera The camera to use.
-	 */
-	public Vision(USBCamera camera) {
 		this.frame = NIVision.imaqCreateImage(ImageType.IMAGE_RGB, 0);
-		this.camera = camera;
-		this.camera.openCamera();
-		this.camera.startCapture();
-		this.camera.setWhiteBalanceAuto();
-		this.camera.setExposureAuto();
+		this.cameraHandle = NIVision.IMAQdxOpenCamera(cameraName, NIVision.IMAQdxCameraControlMode.CameraControlModeController);
+		NIVision.IMAQdxConfigureGrab(cameraHandle);
 	}
 
 	/**
@@ -43,7 +31,7 @@ public class Vision implements Module {
 	 */
 	@Override
 	public void control(Controls controls) {
-		camera.getImage(this.frame);
+		NIVision.IMAQdxGrab(this.cameraHandle, this.frame, 1);
 		CameraServer.getInstance().setImage(this.frame);
 	}
 }
