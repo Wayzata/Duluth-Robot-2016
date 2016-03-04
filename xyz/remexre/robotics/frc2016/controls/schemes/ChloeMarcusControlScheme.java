@@ -49,7 +49,11 @@ public class ChloeMarcusControlScheme extends ControlSchemeBase {
 
 	@Override
 	public Consumer<Controls> mapDriveAxes(Axes driveAxes) {
-		return (c) -> c.drive = new Axes(driveAxes.x, -driveAxes.y);
+		return (c) -> {
+			double xMul = 1.0, yMul = -1.0;
+			if(driveAxes.y < 0) xMul *= -1;
+			c.drive = new Axes(xMul * driveAxes.x, yMul * driveAxes.y);
+		};
 	}
 	
 	@Override
