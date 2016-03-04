@@ -1,12 +1,9 @@
 package xyz.remexre.robotics.frc2016;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import xyz.remexre.robotics.frc2016.autonomous.ArmDownAutonomous;
 import xyz.remexre.robotics.frc2016.autonomous.AutonomousProgram;
 import xyz.remexre.robotics.frc2016.autonomous.BasicAutonomous;
@@ -14,47 +11,34 @@ import xyz.remexre.robotics.frc2016.controls.ControlScheme;
 import xyz.remexre.robotics.frc2016.controls.Controls;
 import xyz.remexre.robotics.frc2016.controls.GamepadButton;
 import xyz.remexre.robotics.frc2016.controls.schemes.ChloeMarcusControlScheme;
+import xyz.remexre.robotics.frc2016.controls.schemes.DrakeGwynethControlScheme;
 import xyz.remexre.robotics.frc2016.modules.Controllers;
 import xyz.remexre.robotics.frc2016.modules.DriveTrain;
 import xyz.remexre.robotics.frc2016.modules.Module;
 import xyz.remexre.robotics.frc2016.modules.Shooter;
 import xyz.remexre.robotics.frc2016.modules.Vision;
+import xyz.remexre.robotics.frc2016.util.BetterSendableChooser;
 
 public class Robot extends IterativeRobot {
-	private List<AutonomousProgram> autonomi;
-	private SendableChooser autonomousChooser;
+	private BetterSendableChooser<AutonomousProgram> autonomi;
 	private long autonomousStartTime;
 	private Controllers controllers;
-	private List<ControlScheme> controlSchemes;
-	private SendableChooser controlSchemeChooser;
+	private BetterSendableChooser<ControlScheme> controlSchemes;
 	private Set<Module> modules;
 	
 	@Override
 	public void robotInit() {
-		this.autonomi = new ArrayList<>();
-		this.autonomi.add(new BasicAutonomous());
-		this.autonomi.add(new ArmDownAutonomous());
-		
-		this.autonomousChooser = new SendableChooser();
-		this.autonomousChooser.addDefault(this.autonomi.get(0).toString(), this.autonomi.get(0));
-		for(int i = 1; i < this.autonomi.size(); i++) {
-			AutonomousProgram program = this.autonomi.get(i);
-			this.autonomousChooser.addObject(program.toString(), program);
-		}
+		this.autonomi = new BetterSendableChooser<>(
+				new BasicAutonomous(),
+				new ArmDownAutonomous());
 		
 		this.controllers = new Controllers(RobotParts.JOYSTICKS.DRIVE,
 				RobotParts.JOYSTICKS.ARM);
 		
-		this.controlSchemes = new ArrayList<>();
-		this.controlSchemes.add(new ChloeMarcusControlScheme());
+		this.controlSchemes = new BetterSendableChooser<>(
+				new ChloeMarcusControlScheme(),
+				new DrakeGwynethControlScheme());
 
-		this.controlSchemeChooser = new SendableChooser();
-		this.controlSchemeChooser.addDefault(this.controlSchemes.get(0).toString(), this.controlSchemes.get(0));
-		for(int i = 1; i < this.controlSchemes.size(); i++) {
-			ControlScheme controlScheme = this.controlSchemes.get(i);
-			this.controlSchemeChooser.addObject(controlScheme.toString(), controlScheme);
-		}
-		
 		this.modules = new HashSet<>();
 		this.modules.add(new DriveTrain(
 				RobotParts.MOTORS.FRONT_LEFT,
@@ -77,15 +61,15 @@ public class Robot extends IterativeRobot {
 	
 	@Override
 	public void autonomousPeriodic() {
-		AutonomousProgram program = (AutonomousProgram) this.autonomousChooser.getSelected();
-		Controls controls = program.periodic(System.currentTimeMillis() - this.autonomousStartTime);
+		long timeInAutonomous = System.currentTimeMillis() - this.autonomousStartTime;
+		Controls controls = this.autonomi.get().periodic(timeInAutonomous);
 		this.modules.forEach((module) -> module.control(controls));
 	}
 
 	@Override
 	public void teleopPeriodic() {
 		// Get the gamepad controls.
-		ControlScheme controlScheme = (ControlScheme) this.controlSchemeChooser.getSelected();
+		ControlScheme controlScheme = this.controlSchemes.get();
 		Set<GamepadButton> buttons = this.controllers.getGamepadButtons(controlScheme);
 		Controls controls = controlScheme.map(buttons,
 				this.controllers.getDriveAxes(),
