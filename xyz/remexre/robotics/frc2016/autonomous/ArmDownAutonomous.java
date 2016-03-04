@@ -7,9 +7,9 @@ public class ArmDownAutonomous extends AutonomousProgram {
 	@Override
 	public Controls periodic(long timeInAutonomous) {
 		double speed = 0.0;
-		if(timeInAutonomous <= 500)
+		if(3000 < timeInAutonomous && timeInAutonomous <= 3500)
 			speed = timeInAutonomous / 500.0;
-		else if(500 < timeInAutonomous && timeInAutonomous < 3000)
+		else if(3500 < timeInAutonomous && timeInAutonomous < 6000)
 			speed = 1.0;
 		
 		Controls controls = new Controls();
