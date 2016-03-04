@@ -52,14 +52,14 @@ public class Shooter implements Module {
 	 * this pulls, pushes or stops the belt motor
 	 * @param running
 	 */
-	public void shooter(boolean running) {
-		this.mainMotor.set(running ? TernaryMotor.State.FORWARD : TernaryMotor.State.STOP);
+	public void shooter(TernaryMotor.State state) {
+		this.mainMotor.set(state);
 	}
 	
 	@Override
 	public void control(Controls controls) {
-		this.arm(controls.shooterArmAngle);
+		this.arm(controls.armAngle);
 		this.belt(controls.belt);
-		this.shooter(controls.enableShooter);
+		this.shooter(controls.shooter);
 	}
 }

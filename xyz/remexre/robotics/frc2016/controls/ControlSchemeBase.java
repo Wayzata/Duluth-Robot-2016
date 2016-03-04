@@ -31,10 +31,10 @@ public abstract class ControlSchemeBase implements ControlScheme {
 		buttons.stream()
 			.map(this::mapButtons)
 			.forEach((fn) -> fn.accept(controls));
-		this.mapDriveAxes(driveAxes).accept(controls);
+		this.mapDriveAxes(driveAxes.zeroIf(0.2)).accept(controls);
 		this.mapSlider(slider).accept(controls);
-		this.mapLeftAxes(leftAxes).accept(controls);
-		this.mapRightAxes(rightAxes).accept(controls);
+		this.mapLeftAxes(leftAxes.zeroIf(0.2)).accept(controls);
+		this.mapRightAxes(rightAxes.zeroIf(0.2)).accept(controls);
 		return controls;
 	}
 	
@@ -49,7 +49,7 @@ public abstract class ControlSchemeBase implements ControlScheme {
 	 * @param button The button pressed.
 	 * @return The mutating function.
 	 */
-	public abstract Consumer<Controls> mapButtons(GamepadButton button);
+	public Consumer<Controls> mapButtons(GamepadButton button) { return (c) -> {}; }
 
 	/**
 	 * Maps the state of the drive axes to a function that mutates the controls
@@ -57,7 +57,7 @@ public abstract class ControlSchemeBase implements ControlScheme {
 	 * @param driveAxes The drive axes.
 	 * @return The mutating function.
 	 */
-	public abstract Consumer<Controls> mapDriveAxes(Axes driveAxes);
+	public Consumer<Controls> mapDriveAxes(Axes driveAxes) { return (c) -> {}; }
 
 	/**
 	 * Maps the state of the slider to a function that mutates the controls
@@ -65,7 +65,7 @@ public abstract class ControlSchemeBase implements ControlScheme {
 	 * @param slider The slider's position, -1 to 1.
 	 * @return The mutating function.
 	 */
-	public abstract Consumer<Controls> mapSlider(double slider);
+	public Consumer<Controls> mapSlider(double slider) { return (c) -> {}; }
 	
 	/**
 	 * Maps the state of the left axes to a function that mutates the controls
@@ -73,7 +73,7 @@ public abstract class ControlSchemeBase implements ControlScheme {
 	 * @param driveAxes The left axes.
 	 * @return The mutating function.
 	 */
-	public abstract Consumer<Controls> mapLeftAxes(Axes leftAxes);
+	public Consumer<Controls> mapLeftAxes(Axes leftAxes) { return (c) -> {}; }
 
 	/**
 	 * Maps the state of the right axes to a function that mutates the controls
@@ -81,5 +81,5 @@ public abstract class ControlSchemeBase implements ControlScheme {
 	 * @param driveAxes The right axes.
 	 * @return The mutating function.
 	 */
-	public abstract Consumer<Controls> mapRightAxes(Axes rightAxes);
+	public Consumer<Controls> mapRightAxes(Axes rightAxes) { return (c) -> {}; }
 }

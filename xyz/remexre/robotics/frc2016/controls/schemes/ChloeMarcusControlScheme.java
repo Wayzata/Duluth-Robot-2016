@@ -3,6 +3,7 @@ package xyz.remexre.robotics.frc2016.controls.schemes;
 import java.util.function.Consumer;
 
 import xyz.remexre.robotics.frc2016.controls.Axes;
+import xyz.remexre.robotics.frc2016.controls.ConflictGroup;
 import xyz.remexre.robotics.frc2016.controls.ControlSchemeBase;
 import xyz.remexre.robotics.frc2016.controls.Controls;
 import xyz.remexre.robotics.frc2016.controls.GamepadButton;
@@ -14,45 +15,33 @@ import xyz.remexre.robotics.frc2016.util.TernaryMotor.State;
  * @author Nathan Ringo
  */
 public class ChloeMarcusControlScheme extends ControlSchemeBase {
-	private double shooterArmAngle = 0;
-	private double shoulderAngle = 0;
-	private double elbowAngle = 0;
+	private double armAngle = 0;
 	
 	public ChloeMarcusControlScheme() {
-		super(); // TODO
+		super(new ConflictGroup(GamepadButton.JOYSTICK_TRIGGER, GamepadButton.JOYSTICK_THUMB),
+				new ConflictGroup(GamepadButton.R1, GamepadButton.L1),
+				new ConflictGroup(GamepadButton.R2, GamepadButton.L2));
 	}
 	
 	@Override
 	public Controls init() {
 		Controls c = new Controls();
-		c.driveSpeedMultiplier = 1.0;
-		c.shooterArmAngle = this.shooterArmAngle;
-		c.shoulderAngle = this.shoulderAngle;
-		c.elbowAngle = this.elbowAngle;
+		c.armAngle = this.armAngle;
 		return c;
 	}
 
 	@Override
 	public Consumer<Controls> mapButtons(GamepadButton button) {
 		switch(button) {
-		// Arm
-		case UP: return (c) -> c.forearmExtended = true;
-		case DOWN: return (c) -> c.forearmExtended = false;
-		// Drive Train
-//		case JOYSTICK_THUMB: return (c) -> c.driveSpeedMultiplier = 1.0;
-		// Shooter
-		case JOYSTICK_TRIGGER: return (c) -> c.enableShooter = true;
-		case JOYSTICK_BUTTON_6:
+		case JOYSTICK_TRIGGER: return (c) -> c.shooter = State.FORWARD;
+		case JOYSTICK_THUMB: return (c) -> c.shooter = State.BACKWARD;
+		
 		case R1: return (c) -> c.belt = State.FORWARD;
-		case JOYSTICK_BUTTON_4:
 		case L1: return (c) -> c.belt = State.BACKWARD;
-		case JOYSTICK_BUTTON_5:
-		case R2: return (c) -> this.shooterArmAngle += 50;
-		case JOYSTICK_BUTTON_3:
-		case L2: return (c) -> this.shooterArmAngle -= 50;
-		// Winch
-		case A: return (c) -> c.winch = State.FORWARD;
-		case B: return (c) -> c.winch = State.BACKWARD;
+		
+		case R2: return (c) -> this.armAngle += 50;
+		case L2: return (c) -> this.armAngle -= 50;
+		
 		// Do nothing on an unknown button
 		default: return (c) -> {};
 		}
@@ -60,22 +49,9 @@ public class ChloeMarcusControlScheme extends ControlSchemeBase {
 
 	@Override
 	public Consumer<Controls> mapDriveAxes(Axes driveAxes) {
-		return (c) -> c.drive = driveAxes;
+		return (c) -> c.drive = driveAxes.times(-1);
 	}
-
+	
 	@Override
-	public Consumer<Controls> mapSlider(double slider) {
-//		return (c) -> c.driveSpeedMultiplier *= (slider + 1);
-		return (c) -> {};
-	}
-
-	@Override
-	public Consumer<Controls> mapLeftAxes(Axes leftAxes) {
-		return (c) -> this.shoulderAngle += 10 * leftAxes.y;
-	}
-
-	@Override
-	public Consumer<Controls> mapRightAxes(Axes rightAxes) {
-		return (c) -> this.elbowAngle += 10 * rightAxes.y;
-	}
+	public String toString() { return "Chloe and Marcus"; }
 }

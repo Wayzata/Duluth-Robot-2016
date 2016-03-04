@@ -26,6 +26,12 @@ public interface ControlScheme {
 	public Controls map(Set<GamepadButton> buttons, Axes driveAxes, double slider, Axes leftAxes, Axes rightAxes);
 
 	/**
+	 * Returns a human-readable description of the control scheme.
+	 * @return A string containing the description.
+	 */
+	public String toString();
+	
+	/**
 	 * Creates a new filtering function for use in removing conflicting buttons.
 	 * @return A function capable of being used in {@link Stream#filter(Predicate)}.
 	 */

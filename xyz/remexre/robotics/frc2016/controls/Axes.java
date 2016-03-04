@@ -17,6 +17,11 @@ public class Axes {
 		return Math.abs(this.x) < cutoff && Math.abs(this.y) < cutoff;
 	}
 	
+	public Axes zeroIf(double cutoff) {
+		if(this.isZero(cutoff)) return new Axes(0, 0);
+		else return this;
+	}
+	
 	public double cartesianDistance() {
 		return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
 	}

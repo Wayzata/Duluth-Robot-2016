@@ -24,24 +24,9 @@ public class RobotParts {
 		public static final int BACK_LEFT = 20;
 		public static final int BACK_RIGHT = 19;
 
-		public static final int SHOULDER = 24; // TODO SAFETY
-		public static final int ELBOW = 25; // TODO SAFETY
-		public static final int FOREARM = 26;
-
 		public static final int BELT = 21;
 		public static final int SHOOTER_ARM = 23; // TODO SAFETY
 		public static final int SHOOTER = 22;
-
-		public static final int WINCH = 27; // TODO SAFETY
-	}
-
-	/**
-	 * The ID numbers of switches.
-	 * @author Nathan Ringo
-	 */
-	public static final class SWITCHES {
-		public static final int RETRACT = 0;
-		public static final int EXTEND = 1;
 	}
 	
 	/**

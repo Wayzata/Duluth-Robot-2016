@@ -5,8 +5,8 @@ public class ArmMath {
 	public static final double elbowMin = -370;
 	
 	public static boolean breaksSafety(double shoulderAngle, double elbowAngle) {
-		if(elbowAngle < elbowMin || elbowAngle > elbowMax)
-			return true;
+//		if(elbowAngle < elbowMin || elbowAngle > elbowMax)
+//			return true;
 		return false;
 	}
 }
