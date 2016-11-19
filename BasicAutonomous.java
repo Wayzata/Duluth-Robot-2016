@@ -9,8 +9,8 @@ public class BasicAutonomous extends AutonomousProgram {
 		double speed = 0.0;
 		if(timeInAutonomous <= 500)
 			speed = timeInAutonomous / 500.0;
-		else if(500 < timeInAutonomous && timeInAutonomous < 3000)
-			speed = 1.0;
+		else if(500 < timeInAutonomous && timeInAutonomous < 4000)
+			speed = .75;
 		
 		Controls controls = new Controls();
 		controls.drive = new Axes(0.0, speed);
